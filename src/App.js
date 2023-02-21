@@ -1,23 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { useState } from "react";
+import "./App.css";
+import { Task } from "./Task";
+import "./User.js";
+//import { Person1 } from "./User.js";
 function App() {
+  const [toDolist, setToDoList] = useState([]);
+  const [newTask, setNewTask] = useState("");
+
+  const addTask = () => {
+    const task = {
+      id: toDolist.length === 0 ? 1 : toDolist[toDolist.length - 1].id + 1,
+      taskName: newTask,
+      complete: false,
+    };
+    setToDoList([...toDolist, task]);
+  };
+
+  const deleteTask = (id) => {
+    setToDoList(toDolist.filter((task) => task.id !== id));
+  };
+  const CompleteTask = (id) => {
+    const completed = toDolist.map((task) => {
+      return task.id === id ? { ...task, complete: !task.complete } : task;
+    });
+    setToDoList([...completed]);
+  };
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="addTask">
+        <input onChange={(event) => setNewTask(event.target.value)} />
+        <button onClick={addTask}>Add Task</button>
+      </div>
+
+      <div className="list">
+        {toDolist.map((task, key) => {
+          return (
+            <Task
+              taskName={task.taskName}
+              key={key}
+              id={task.id}
+              complete={task.complete}
+              deleteTask={deleteTask}
+              CompleteTask={CompleteTask}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 }
